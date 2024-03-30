@@ -1,0 +1,18 @@
+version: '3'
+services:
+  novampp:
+    container_name: novampp
+    image: novampp-httpd
+    volumes:
+      - ./
+    working_dir: /app
+    command: sh -c "apachectl -D FOREGROUND"
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - novampp
+networks:
+  novampp:
+    name: novampp
