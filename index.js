@@ -33,7 +33,6 @@ if (debugMode) {
     };
     log();
     console.log('Debug mode is enabled');
-    console.log('Starting NovAMPP...');
 };
 function isDockerRunning() {
     return new Promise((resolve, reject) => {
@@ -63,7 +62,7 @@ function createWindow() {
         win.hide();
     });
     win.setIcon(iconPath);
-    win.loadFile('./src/index.html');
+    win.loadFile('./src/startdocker.html');
     //win.webContents.openDevTools();
     return win;
 };
@@ -93,6 +92,7 @@ function createTrayMenu(win) {
     trayIcon.setContextMenu(trayMenu);
 };
 app.whenReady().then(() => {
+    console.log('Starting NovAMPP...');
     const iconPath = path.join(__dirname, './src/favicon.png');
     const win = createWindow();
     createTrayMenu(win);
@@ -103,22 +103,42 @@ app.whenReady().then(() => {
         window.setIcon(iconPath);
     });
 });
+ipcMain.on('isdockerrunning', async (event) => {
+    const dockerRunning = await isDockerRunning();
+    event.returnValue = dockerRunning;
+});
+ipcMain.on('install-docker', (event) => {
+    console.log('Installing Docker...');
+    const command = process.platform === 'win32' ? 'start https://docs.docker.com/docker-for-windows/install/' : process.platform === 'darwin' ? 'open https://docs.docker.com/docker-for-mac/install/' : 'xdg-open https://docs.docker.com/engine/install/';
+    console.log(command);
+    exec(command, (error, stdout, stderr) => {
+        if (error) {
+            console.log('Failed to open Docker installation page');
+            event.reply('docker-install', 'failed');
+        } else {
+            console.log('Docker installation page opened');
+            return "success";
+        }
+    });
+});
 ipcMain.on('start-docker', (event) => {
     const dockerRunning = isDockerRunning();
     if (dockerRunning) {
         console.log('Docker is already running');
-        return;
+        event.reply('docker-status', 'running');
     } else {
         console.log('Starting Docker...');
         const command = process.platform === 'win32' ? 'start docker' : process.platform === 'darwin' ? 'open --background -a Docker' : 'systemctl start docker';
         exec(command, (error, stdout, stderr) => {
             if (error) {
                 console.log('Failed to start Docker');
+                event.reply('docker-status', 'failed');
             } else {
                 console.log('Docker started');
+                event.reply('docker-status', 'started');
             }
         });
-    }
+    };
 });
 app.on('window-all-closed', function () {
     app.exit();

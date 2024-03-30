@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            @font-face {
+                font-family: 'JetBrains Mono';
+                src: url('./fonts/JetBrainsMonoNerdFontMono-Regular.ttf');
+            }
+            div {
+                color: #ffffff;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 100%;
+                display: block;
+            }
+            body {
+                background-color: black;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+                margin: 0;
+            }
+            h1, p {
+                color: #8200ff;
+                font-family: 'JetBrains Mono', monospace;
+            }
+            #errormessage {
+                color: #ff0000;
+            }
+            button {
+                background-color: #a1a1a1;
+                color: #ffffff;
+                font-family: 'JetBrains Mono', monospace;
+                border: none;
+                padding: 10px;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+            br {
+                margin-bottom: 20.8px;
+            }
+        </style>
+        <meta charset="UTF-8" />
+        <title>NovAMPP</title>
+    </head>
+    <body>
+        <h1>NovAMPP</h1>
+        <p id="errormessage"></p>
+        <button style="display: inline;" id="dockerstart">Start Docker</button> <button style="display: inline;" id="installdocker">Install Docker</button>
+        <script src="./scripts/startdocker.js"></script>
+    </body>
+</html>
