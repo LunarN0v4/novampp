@@ -1,5 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron')
 contextBridge.exposeInMainWorld('electronAPI', {
-    startdocker: () => ipcRenderer.send('start-docker'),
-    installdocker: () => ipcRenderer.send('install-docker'),
+    isdockerrunning: () => ipcRenderer.invoke('isdockerrunning'),
+    startdocker: () => ipcRenderer.invoke('start-docker'),
+    installdocker: () => ipcRenderer.invoke('install-docker'),
 });

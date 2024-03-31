@@ -25,6 +25,9 @@
                 color: #8200ff;
                 font-family: 'JetBrains Mono', monospace;
             }
+            #errormessage {
+                color: #ff0000;
+            }
             button {
                 background-color: #a1a1a1;
                 color: #ffffff;
@@ -42,8 +45,9 @@
         <title>NovAMPP</title>
     </head>
     <body>
-        <h1>NovAMPP</h1>
-        <button id="dockerstart">This is a button</button>
-        <script src="./scripts/menu.js"></script>
+        <h1>NovAMPP is detecting your environment</h1>
+        <div>Please wait...</div>
+        <p id="errormessage"></p>
+        <script src="./scripts/init.js"></script>
     </body>
 </html>

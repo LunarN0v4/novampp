@@ -1,4 +1,6 @@
 const debugMode = process.env.NOVAMPP_DEBUG === '1';
+const forceDocker = process.env.NOVAMPP_FORCE_DOCKER === '1';
+const forceMenu = process.env.NOVAMPP_FORCE_MENU === '1';
 const { app, BrowserWindow, Tray, Menu, ipcMain } = require('electron');
 const { exec } = require('child_process');
 const path = require('path');
@@ -32,7 +34,7 @@ if (debugMode) {
         return logger;
     };
     log();
-    console.log('Debug mode is enabled');
+    console.log('Debug logging is enabled');
 };
 function isDockerRunning() {
     return new Promise((resolve, reject) => {
@@ -62,7 +64,17 @@ function createWindow() {
         win.hide();
     });
     win.setIcon(iconPath);
-    win.loadFile('./src/startdocker.html');
+    if (forceMenu) {
+        console.log('Forcing menu page');
+        win.loadFile(path.join(__dirname, './src/menu.html'));
+    } else if (forceDocker) {
+        console.log('Forcing Docker start page');
+        win.loadFile(path.join(__dirname, './src/startdocker.html'));
+    } else if (isDockerRunning()) {
+        win.loadFile(path.join(__dirname, './src/menu.html'));
+    } else {
+        win.loadFile(path.join(__dirname, './src/index.html'));
+    };
     //win.webContents.openDevTools();
     return win;
 };
@@ -82,7 +94,15 @@ function createTrayMenu(win) {
                 createWindow();
             }
         }},
-        { label: 'Item 2', click: () => console.log('Clicked Item 2') },
+        { label: 'Restart Compose', click: () => {
+            exec('docker compose down && docker compose up -d', { cwd: __dirname }, (error, stdout, stderr) => {
+                if (error) {
+                    console.log('Failed to restart Compose');
+                } else {
+                    console.log('Compose restarted');
+                };
+            });
+        }},
         { type: 'separator' },
         { label: 'Quit', click: () => {
             app.exit();
@@ -103,40 +123,56 @@ app.whenReady().then(() => {
         window.setIcon(iconPath);
     });
 });
-ipcMain.on('isdockerrunning', async (event) => {
+ipcMain.handle('isdockerrunning', async (event) => {
     const dockerRunning = await isDockerRunning();
-    event.returnValue = dockerRunning;
+    if (dockerRunning) {
+        console.log('Docker is running');
+        return new Promise((resolve, reject) => {
+            resolve('running');
+        });
+    } else {
+        console.log('Docker is not running');
+        return new Promise((resolve, reject) => {
+            resolve('notrunning');
+        });
+    };
 });
-ipcMain.on('install-docker', (event) => {
+ipcMain.handle('install-docker', (event) => {
     console.log('Installing Docker...');
     const command = process.platform === 'win32' ? 'start https://docs.docker.com/docker-for-windows/install/' : process.platform === 'darwin' ? 'open https://docs.docker.com/docker-for-mac/install/' : 'xdg-open https://docs.docker.com/engine/install/';
     console.log(command);
-    exec(command, (error, stdout, stderr) => {
-        if (error) {
-            console.log('Failed to open Docker installation page');
-            event.reply('docker-install', 'failed');
-        } else {
-            console.log('Docker installation page opened');
-            return "success";
-        }
+    return new Promise((resolve, reject) => {
+        exec(command, (error, stdout, stderr) => {
+            if (error) {
+                console.log('Failed to open Docker installation page');
+                resolve('failed');
+            } else {
+                console.log('Docker installation page opened');
+                resolve('success');
+            }
+        });
     });
 });
-ipcMain.on('start-docker', (event) => {
+ipcMain.handle('start-docker', (event) => {
     const dockerRunning = isDockerRunning();
     if (dockerRunning) {
         console.log('Docker is already running');
-        event.reply('docker-status', 'running');
+        return new Promise((resolve, reject) => {
+            resolve('running');
+        });
     } else {
         console.log('Starting Docker...');
         const command = process.platform === 'win32' ? 'start docker' : process.platform === 'darwin' ? 'open --background -a Docker' : 'systemctl start docker';
-        exec(command, (error, stdout, stderr) => {
-            if (error) {
-                console.log('Failed to start Docker');
-                event.reply('docker-status', 'failed');
-            } else {
-                console.log('Docker started');
-                event.reply('docker-status', 'started');
-            }
+        return new Promise((resolve, reject) => {
+            exec(command, (error, stdout, stderr) => {
+                if (error) {
+                    console.log('Failed to start Docker');
+                    resolve('failed');
+                } else {
+                    console.log('Docker started');
+                    resolve('started');
+                }
+            });
         });
     };
 });

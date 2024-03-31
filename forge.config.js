@@ -9,29 +9,60 @@ module.exports = {
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
-      config: {},
-    },
-    {
-      name: '@electron-forge/maker-dmg',
       config: {
-        background: './assets/dmg-background.png',
-        format: 'ULFO',
+        name: 'NovAMPP',
+        authors: 'Nova Notepad',
+        exe: 'NovAMPP',
+        setupIcon: './src/favicon.png',
+        setupExe: 'NovAMPP-Installer.exe',
       },
     },
     {
-      name: '@electron-forge/maker-appimage',
-      config: {},
+      name: '@electron-forge/maker-zip',
+      platforms: ['darwin', 'linux'],
     },
-  ],
-  publishers: [
     {
-      name: '@electron-forge/publisher-github',
+      name: '@electron-forge/maker-deb',
       config: {
-        repository: {
-          owner: 'LunarN0v4',
-          name: 'novampp',
+        options: {
+          name: 'dev.nova.novampp',
+          productName: 'NovAMPP',
+          genericName: 'NovAMPP',
+          description: 'NovAMPP, a simple dockerised web server.',
+          productDescription: 'NovAMPP, a simple dockerised web server.',
+          version: '1.0.0',
+          revision: '1',
+          section: 'devel',
+          priority: 'optional',
+          arch: 'amd64',
+          depends: ['docker', 'docker-compose'],
+          maintainer: 'Nova Notepad',
+          homepage: 'https://git.zeusteam.dev/nova/novampp',
+          icon: './src/favicon.png',
+          categories: ['Development'],
         },
-        prerelease: true
+      },
+    },
+    {
+      name: '@electron-forge/maker-rpm',
+      config: {
+        options: {
+          name: 'dev.nova.novampp',
+          productName: 'NovAMPP',
+          genericName: 'NovAMPP',
+          description: 'NovAMPP, a simple dockerised web server.',
+          productDescription: 'NovAMPP, a simple dockerised web server.',
+          version: '1.0.0',
+          revision: '1',
+          section: 'devel',
+          priority: 'optional',
+          arch: 'x86_64',
+          depends: ['docker', 'docker-compose'],
+          maintainer: 'Nova Notepad',
+          homepage: 'https://git.zeusteam.dev/nova/novampp',
+          icon: './src/favicon.png',
+          categories: ['Development'],
+        },
       },
     },
   ],

@@ -1,6 +1,12 @@
 const dockerstart = document.getElementById('dockerstart');
 const installdocker = document.getElementById('installdocker');
 const errormessage = document.getElementById('errormessage');
+window.addEventListener('load', async () => {
+    const response = await window.electronAPI.isdockerrunning();
+    if (response === 'running') {
+        window.location.href = 'menu.html';
+    };
+});
 dockerstart.addEventListener('click', async () => {
     const response = await window.electronAPI.startdocker();
     if (response === 'started') {
@@ -8,8 +14,6 @@ dockerstart.addEventListener('click', async () => {
         errormessage.innerText = 'Docker started successfully, redirecting to the menu page...';
         window.location.href = 'menu.html';
     } else if (response === 'running') {
-        errormessage.style.color = 'green';
-        errormessage.innerText = 'Docker is already running, redirecting to the menu page...';
         window.location.href = 'menu.html';
     } else {
         errormessage.style.color = 'red';
