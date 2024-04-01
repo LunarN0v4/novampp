@@ -31,9 +31,6 @@ builder:
     script:
         - echo 'deb http://deb.debian.org/debian/ stable main contrib non-free' >> /etc/apt/sources.list
         - apt-get update && apt-get install -y nodejs npm git curl wget wine mono-complete dpkg rpm zip unzip
-        - cd /
-        - git clone https://git.zeusteam.dev/nova/novampp.git
-        - cd novampp
         - npm install .
         - npm run make
     artifacts:
