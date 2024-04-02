@@ -4,6 +4,7 @@ const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 module.exports = {
   packagerConfig: {
     asar: true,
+    executableName: 'NovAMPP',
   },
   rebuildConfig: {},
   makers: [
@@ -25,7 +26,7 @@ module.exports = {
       name: '@electron-forge/maker-deb',
       config: {
         options: {
-          name: 'dev.nova.novampp',
+          name: 'NovAMPP',
           productName: 'NovAMPP',
           genericName: 'NovAMPP',
           description: 'NovAMPP, a simple dockerised web server.',
@@ -47,7 +48,7 @@ module.exports = {
       name: '@electron-forge/maker-rpm',
       config: {
         options: {
-          name: 'dev.nova.novampp',
+          name: 'NovAMPP',
           productName: 'NovAMPP',
           genericName: 'NovAMPP',
           description: 'NovAMPP, a simple dockerised web server.',

@@ -33,9 +33,11 @@ builder:
         - apt-get update && apt-get install -y nodejs npm git curl wget wine mono-complete dpkg rpm zip unzip
         - npm install .
         - npm run make
+        - npm run make-win
+        - npm run make-darwin
     artifacts:
         paths:
-            - /novampp
+            - ./out/NovAMPP-linux-x64/NovAMPP
     only:
         - tags
         - triggers
