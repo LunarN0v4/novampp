@@ -1,12 +1,50 @@
 const debugMode = process.env.NOVAMPP_DEBUG === '1';
 const forceDocker = process.env.NOVAMPP_FORCE_DOCKER === '1';
 const forceMenu = process.env.NOVAMPP_FORCE_MENU === '1';
-const { app, BrowserWindow, Tray, Menu, ipcMain } = require('electron');
+const { app, BrowserWindow, Tray, Menu, ipcMain, dialog } = require('electron');
 const { exec } = require('child_process');
 const path = require('path');
 const literalpath = path.join(__dirname);
 const fs = require('fs');
-const exp = require('constants');
+const axios = require('axios');
+async function checkforupdates() {
+    const appVersion = app.getVersion();
+    const otherVersionUrl = 'https://git.zeusteam.dev/nova/novampp/-/raw/master/package.json';
+    try {
+        const response = await axios.get(otherVersionUrl);
+        const otherVersion = response.data.version;
+
+        if (appVersion === otherVersion) {
+            console.log('App version is up to date');
+        } else if (appVersion < otherVersion) {
+            console.log('App version is older');
+            dialog.showMessageBox({
+                type: 'info',
+                title: 'Update Available - NovAMPP',
+                message: 'A new version of NovAMPP is available. Please update to the latest version.',
+                detail: `Current Version: ${appVersion}\nLatest Version: ${otherVersion}`,
+                buttons: ['OK', 'Update']
+            }).then((response) => {
+                if (response.response === 1) {
+                    const command = process.platform === 'win32' ? 'start https://git.zeusteam.dev/nova/novampp/-/releases' : process.platform === 'darwin' ? 'open https://git.zeusteam.dev/nova/novampp/-/releases' : 'xdg-open https://git.zeusteam.dev/nova/novampp/-/releases';
+                    exec(command, (error, stdout, stderr) => {
+                        if (error) {
+                            console.log('Failed to open update page');
+                        } else {
+                            console.log('Update page opened');
+                        }
+                    });
+                } else {
+                    console.log('User chose not to update');
+                };
+            });
+        } else {
+            console.log('I have no idea what happened here');
+        }
+    } catch (error) {
+        console.log('Failed to fetch latest version');
+    }
+};
 if (debugMode) {
     function createLogger(logFilePath) {
         const logStream = fs.createWriteStream(logFilePath, { flags: 'a' });
@@ -113,6 +151,7 @@ function createTrayMenu(win) {
 };
 app.whenReady().then(() => {
     console.log('Starting NovAMPP...');
+    checkforupdates();
     const iconPath = path.join(__dirname, './src/favicon.png');
     const win = createWindow();
     createTrayMenu(win);
