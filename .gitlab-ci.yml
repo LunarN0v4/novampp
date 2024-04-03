@@ -5,20 +5,10 @@ builder:
     stage: build
     image: debian:12
     script:
-        - echo 'deb http://deb.debian.org/debian/ stable main contrib non-free' >> /etc/apt/sources.list
         - apt-get update
-        - apt-get install -y --install-recommends --fix-missing software-properties-common gpg git curl wget dpkg rpm zip unzip
-        - dpkg --add-architecture i386
-        - wget -nc https://dl.winehq.org/wine-builds/winehq.key
-        - apt-key add winehq.key
-        - echo 'deb https://dl.winehq.org/wine-builds/debian/ bullseye main' | tee /etc/apt/sources.list.d/winehq.list
-        - apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-        - echo "deb https://download.mono-project.com/repo/debian stable-buster main" | tee /etc/apt/sources.list.d/mono-official-stable.list
-        - apt-get update
-        - apt-get install -y --install-recommends --fix-missing nodejs npm winehq-stable mono-complete
+        - apt-get install -y --install-recommends --fix-missing nodejs npm git curl wget dpkg rpm zip unzip
         - npm install .
         - npm run make
-        - npm run make-win
         - npm run make-darwin
     artifacts:
         paths:
