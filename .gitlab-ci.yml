@@ -6,10 +6,14 @@ builder:
     image: debian:12
     script:
         - apt-get update
-        - apt-get install -y --install-recommends --fix-missing nodejs npm git curl wget dpkg rpm zip unzip
+        - apt-get install -y --install-recommends --fix-missing nodejs npm curl wget dpkg rpm zip unzip
         - npm install .
-        - npm run make
+        - npm run make-linux
+        # Windows will not be compiled here as installing Wine and Mono takes a lot of time, alongside unnecessary amounts of storage. You may compile a Windows installer and zip using "npm run make-win" on a Windows machine.
+        # Windows installers will still be available in releases, just not in the CI/CD pipeline.
+        # - npm run make-win
         - npm run make-darwin
+        - zip -r out/make/linux.zip out/make/linux
     artifacts:
         paths:
             - ./out/make/*

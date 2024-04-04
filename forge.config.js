@@ -25,6 +25,7 @@ module.exports = {
         exe: 'NovAMPP.exe',
         icon: './src/favicon.ico',
         setupIcon: './src/favicon.ico',
+        loadingGif: './src/installing.gif',
         setupExe: 'NovAMPP-Installer.exe',
         noMsi: true,
       },

@@ -21,7 +21,7 @@ function isDockerInstalled() {
     });
 };
 function registeripc() {
-    ipcMain.handle('isDockerInstalled', async (event) => {
+    ipcMain.handle('isdockerinstalled', async (event) => {
         const dockerInstalled = await isDockerInstalled();
         if (dockerInstalled === 'true') {
             console.log('Docker is installed');
