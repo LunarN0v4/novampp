@@ -6,6 +6,7 @@ builder:
     image: debian:12
     script:
         - apt-get update
+        - apt-get upgrade -y
         - apt-get install -y --install-recommends --fix-missing nodejs npm curl wget dpkg rpm zip unzip
         - npm install .
         - npm run make-linux
