@@ -13,7 +13,6 @@ builder:
         # Windows installers will still be available in releases, just not in the CI/CD pipeline.
         # - npm run make-win
         - npm run make-darwin
-        - zip -r out/make/linux.zip out/make/linux
     artifacts:
         paths:
             - ./out/make/*
