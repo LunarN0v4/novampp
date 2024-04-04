@@ -1,12 +1,14 @@
 const debugMode = process.env.NOVAMPP_DEBUG === '1';
 const forceDocker = process.env.NOVAMPP_FORCE_DOCKER === '1';
 const forceMenu = process.env.NOVAMPP_FORCE_MENU === '1';
-const { app, BrowserWindow, Tray, Menu, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, Tray, Menu, dialog } = require('electron');
 const { exec } = require('child_process');
 const path = require('path');
-const literalpath = path.join(__dirname);
-const fs = require('fs');
+const literalpath = process.platform === 'win32' ? path.join(process.env.LOCALAPPDATA, 'NovAMPP') : process.platform === 'linux' ? '/usr/local/novampp' : '/usr/local/novampp';
 const axios = require('axios');
+const fs = require('fs');
+const installdocker = require('./scripts/installdocker');
+const registeripc = require('./scripts/ipc');
 async function checkforupdates() {
     const appVersion = app.getVersion();
     const otherVersionUrl = 'https://git.zeusteam.dev/nova/novampp/-/raw/master/package.json';
@@ -74,14 +76,23 @@ if (debugMode) {
     log();
     console.log('Debug logging is enabled');
 };
-function isDockerRunning() {
+function isDockerInstalled() {
     return new Promise((resolve, reject) => {
         const command = process.platform === 'win32' ? 'docker version' : 'docker info';
         exec(command, (error, stdout, stderr) => {
             if (error) {
-                resolve(false);
+                resolve("false");
             } else {
-                resolve(true);
+                const command = process.platform === 'win32' ? 'docker-compose version' : 'docker-compose --version';
+                exec(command, (error, stdout, stderr) => {
+                    if (error) {
+                        console.log('Docker Compose is not installed');
+                        resolve("compose");
+                    } else {
+                        console.log('Docker Compose is installed');
+                        resolve("true");
+                    }
+                });
             }
         });
     });
@@ -108,7 +119,7 @@ function createWindow() {
     } else if (forceDocker) {
         console.log('Forcing Docker start page');
         win.loadFile(path.join(__dirname, './src/startdocker.html'));
-    } else if (isDockerRunning()) {
+    } else if (isDockerInstalled() === 'true') {
         win.loadFile(path.join(__dirname, './src/menu.html'));
     } else {
         win.loadFile(path.join(__dirname, './src/index.html'));
@@ -133,7 +144,7 @@ function createTrayMenu(win) {
             }
         }},
         { label: 'Restart Compose', click: () => {
-            exec('docker compose down && docker compose up -d', { cwd: __dirname }, (error, stdout, stderr) => {
+            exec('docker compose down && docker compose up -d', { cwd: literalpath + "./docker/" }, (error, stdout, stderr) => {
                 if (error) {
                     console.log('Failed to restart Compose');
                 } else {
@@ -151,6 +162,8 @@ function createTrayMenu(win) {
 };
 app.whenReady().then(() => {
     console.log('Starting NovAMPP...');
+    if (!fs.existsSync(literalpath)) fs.mkdirSync(literalpath);
+    installdocker();
     checkforupdates();
     const iconPath = path.join(__dirname, './src/favicon.png');
     const win = createWindow();
@@ -161,59 +174,6 @@ app.whenReady().then(() => {
     app.on('browser-window-created', function (event, window) {
         window.setIcon(iconPath);
     });
-});
-ipcMain.handle('isdockerrunning', async (event) => {
-    const dockerRunning = await isDockerRunning();
-    if (dockerRunning) {
-        console.log('Docker is running');
-        return new Promise((resolve, reject) => {
-            resolve('running');
-        });
-    } else {
-        console.log('Docker is not running');
-        return new Promise((resolve, reject) => {
-            resolve('notrunning');
-        });
-    };
-});
-ipcMain.handle('install-docker', (event) => {
-    console.log('Installing Docker...');
-    const command = process.platform === 'win32' ? 'start https://docs.docker.com/docker-for-windows/install/' : process.platform === 'darwin' ? 'open https://docs.docker.com/docker-for-mac/install/' : 'xdg-open https://docs.docker.com/engine/install/';
-    console.log(command);
-    return new Promise((resolve, reject) => {
-        exec(command, (error, stdout, stderr) => {
-            if (error) {
-                console.log('Failed to open Docker installation page');
-                resolve('failed');
-            } else {
-                console.log('Docker installation page opened');
-                resolve('success');
-            }
-        });
-    });
-});
-ipcMain.handle('start-docker', (event) => {
-    const dockerRunning = isDockerRunning();
-    if (dockerRunning) {
-        console.log('Docker is already running');
-        return new Promise((resolve, reject) => {
-            resolve('running');
-        });
-    } else {
-        console.log('Starting Docker...');
-        const command = process.platform === 'win32' ? 'start docker' : process.platform === 'darwin' ? 'open --background -a Docker' : 'systemctl start docker';
-        return new Promise((resolve, reject) => {
-            exec(command, (error, stdout, stderr) => {
-                if (error) {
-                    console.log('Failed to start Docker');
-                    resolve('failed');
-                } else {
-                    console.log('Docker started');
-                    resolve('started');
-                }
-            });
-        });
-    };
 });
 app.on('window-all-closed', function () {
     app.exit();
