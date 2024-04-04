@@ -17,7 +17,7 @@ function installdocker() {
             let downloadUrl;
             if (platform === 'win32') {
                 downloadUrl = 'https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe';
-                sudo.execSync('wsl --install -d Debian')
+                await sudo.execSync('wsl --install -d Debian')
                 .then(() => {
                     axios.get(downloadUrl, { responseType: 'arraybuffer' })
                     .then(async (response) => {
@@ -40,7 +40,7 @@ function installdocker() {
             } else if (platform === 'linux') {
                 const distro = fs.readFileSync('/etc/os-release', 'utf8');
                 if (distro.includes('Ubuntu')) {
-                    sudo.execSync('apt-get update && apt-get install -y apt-transport-https ca-certificates curl software-properties-common gnome-terminal && install -m 0755 /etc/apt/keyrings && curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc && chmod a+r /etc/apt/keyrings/docker.asc && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && apt-get update && apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin && curl -o ' + literalpath + './docker/docker-installer.deb https://desktop.docker.com/linux/main/amd64/139021/docker-desktop-4.28.0-amd64.deb && apt-get -y install ' + literalpath + '/docker/docker-installer.deb');
+                    await sudo.execSync('apt-get update && apt-get install -y apt-transport-https ca-certificates curl software-properties-common gnome-terminal && install -m 0755 /etc/apt/keyrings && curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc && chmod a+r /etc/apt/keyrings/docker.asc && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && apt-get update && apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin && curl -o ' + literalpath + './docker/docker-installer.deb https://desktop.docker.com/linux/main/amd64/139021/docker-desktop-4.28.0-amd64.deb && apt-get -y install ' + literalpath + '/docker/docker-installer.deb');
                     dialog.showMessageBox({
                         type: 'info',
                         title: 'Restart OS - NovAMPP',
@@ -49,9 +49,11 @@ function installdocker() {
                     }).then(async (response) => {
                         console.log('Docker installed');
                         sudo.execSync('reboot now');
+                        app.quit();
+                        app.exit();
                     });
                 } else if (distro.includes('Debian')) {
-                    sudo.execSync('apt-get update && apt-get install -y apt-transport-https ca-certificates curl software-properties-common gnome-terminal && install -m 0755 /etc/apt/keyrings && curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc && chmod a+r /etc/apt/keyrings/docker.asc && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && apt-get update && apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin && curl -o ' + literalpath + './docker/docker-installer.deb https://desktop.docker.com/linux/main/amd64/139021/docker-desktop-4.28.0-amd64.deb && apt-get -y install ' + literalpath + './docker/docker-installer.deb');
+                    await sudo.execSync('apt-get update && apt-get install -y apt-transport-https ca-certificates curl software-properties-common gnome-terminal && install -m 0755 /etc/apt/keyrings && curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc && chmod a+r /etc/apt/keyrings/docker.asc && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && apt-get update && apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin && curl -o ' + literalpath + './docker/docker-installer.deb https://desktop.docker.com/linux/main/amd64/139021/docker-desktop-4.28.0-amd64.deb && apt-get -y install ' + literalpath + './docker/docker-installer.deb');
                     dialog.showMessageBox({
                         type: 'info',
                         title: 'Restart OS - NovAMPP',
@@ -60,13 +62,15 @@ function installdocker() {
                     }).then(async (response) => {
                         console.log('Docker installed');
                         sudo.execSync('reboot now');
+                        app.quit();
+                        app.exit();
                     });
                 } else if (distro.includes('Red Hat')) {
                     const rhelVersion = distro.match(/(\d+)/);
                     if (rhelVersion && (rhelVersion[0] === '9')) {
-                        sudo.execSync('subscription-manager repos --enable codeready-builder-for-rhel-9-$(arch)-rpms && dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm && dnf -y install pass curl wget git gnome-terminal gnome-shell-extension-appindicator && gnome-extensions enable appindicatorsupport@rgcjonas.gmail.com && dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo && curl -o ' + literalpath + './docker/docker-installer.rpm https://desktop.docker.com/linux/main/amd64/139021/docker-desktop-4.28.0-x86_64.rpm && dnf -y install ' + literalpath + './docker/docker-installer.rpm');
+                        await sudo.execSync('subscription-manager repos --enable codeready-builder-for-rhel-9-$(arch)-rpms && dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm && dnf -y install pass curl wget git gnome-terminal gnome-shell-extension-appindicator && gnome-extensions enable appindicatorsupport@rgcjonas.gmail.com && dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo && curl -o ' + literalpath + './docker/docker-installer.rpm https://desktop.docker.com/linux/main/amd64/139021/docker-desktop-4.28.0-x86_64.rpm && dnf -y install ' + literalpath + './docker/docker-installer.rpm');
                     } else if (rhelVersion && (rhelVersion[0] === '8')) {
-                        sudo.execSync('subscription-manager repos --enable codeready-builder-for-rhel-8-$(arch)-rpms && dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && dnf -y install pass curl wget git gnome-terminal gnome-shell-extension-appindicator gnome-shell-extension-desktop-icons && gnome-shell-extension-tool -e appindicatorsupport@rgcjonas.gmail.com && dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo && curl -o ' + literalpath + './docker/docker-installer.rpm https://desktop.docker.com/linux/main/amd64/139021/docker-desktop-4.28.0-x86_64.rpm && dnf -y install ' + literalpath + './docker/docker-installer.rpm');
+                        await sudo.execSync('subscription-manager repos --enable codeready-builder-for-rhel-8-$(arch)-rpms && dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && dnf -y install pass curl wget git gnome-terminal gnome-shell-extension-appindicator gnome-shell-extension-desktop-icons && gnome-shell-extension-tool -e appindicatorsupport@rgcjonas.gmail.com && dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo && curl -o ' + literalpath + './docker/docker-installer.rpm https://desktop.docker.com/linux/main/amd64/139021/docker-desktop-4.28.0-x86_64.rpm && dnf -y install ' + literalpath + './docker/docker-installer.rpm');
                     } else {
                         console.log('Unsupported Red Hat version');
                     };
@@ -78,9 +82,11 @@ function installdocker() {
                     }).then(async (response) => {
                         console.log('Docker installed');
                         sudo.execSync('reboot now');
+                        app.quit();
+                        app.exit();
                     });
                 } else if (distro.includes('Fedora')) {
-                    sudo.execSync('dnf -y install pass curl wget git gnome-terminal dnf-plugins-core && dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo && dnf -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin && curl -o ' + literalpath + './docker/docker-installer.rpm https://desktop.docker.com/linux/main/amd64/139021/docker-desktop-4.28.0-x86_64.rpm && dnf -y install ' + literalpath + './docker/docker-installer.rpm');
+                    await sudo.execSync('dnf -y install pass curl wget git gnome-terminal dnf-plugins-core && dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo && dnf -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin && curl -o ' + literalpath + './docker/docker-installer.rpm https://desktop.docker.com/linux/main/amd64/139021/docker-desktop-4.28.0-x86_64.rpm && dnf -y install ' + literalpath + './docker/docker-installer.rpm');
                     dialog.showMessageBox({
                         type: 'info',
                         title: 'Restart OS - NovAMPP',
@@ -89,16 +95,18 @@ function installdocker() {
                     }).then(async (response) => {
                         console.log('Docker installed');
                         sudo.execSync('reboot now');
+                        app.quit();
+                        app.exit();
                     });
                 } else if (distro.includes('Arch')) {
                     const yayInstalled = execSync('which yay').toString().trim();
                     if (yayInstalled) {
-                        execSync('yay -Syu --noconfirm docker-desktop');
+                        await execSync('yay -Syu --noconfirm docker-desktop');
                     } else {
-                        execSync('git clone https://aur.archlinux.org/yay.git');
-                        execSync('cd yay && makepkg -si --noconfirm');
-                        execSync('yay -Syu --noconfirm docker-desktop');
-                        execSync('cd .. && rm -rf yay');
+                        await execSync('git clone https://aur.archlinux.org/yay.git');
+                        await execSync('cd yay && makepkg -si --noconfirm');
+                        await execSync('yay -Syu --noconfirm docker-desktop');
+                        await execSync('cd .. && rm -rf yay');
                     };
                     dialog.showMessageBox({
                         type: 'info',
@@ -108,6 +116,8 @@ function installdocker() {
                     }).then(async (response) => {
                         console.log('Docker installed');
                         sudo.execSync('reboot now');
+                        app.quit();
+                        app.exit();
                     });
                 } else {
                     console.log('Unsupported Linux distribution');
@@ -117,11 +127,11 @@ function installdocker() {
                 const isIntel = execSync('sysctl -n machdep.cpu.brand_string').toString().includes('Intel');
                 downloadUrl = isIntel ? 'https://desktop.docker.com/mac/main/amd64/Docker.dmg' : 'https://desktop.docker.com/mac/main/arm64/Docker.dmg';
                 axios.get(downloadUrl, { responseType: 'arraybuffer' })
-                .then((response) => {
+                .then(async (response) => {
                     fs.writeFileSync(path.join(literalpath, './docker/docker.dmg'), response.data);
-                    execSync('hdiutil attach ' + literalpath + '/docker/docker.dmg');
-                    execSync('cp -R /Volumes/Docker/Docker.app /Applications');
-                    execSync('hdiutil detach /Volumes/Docker');
+                    await execSync('hdiutil attach ' + literalpath + '/docker/docker.dmg');
+                    await execSync('cp -R /Volumes/Docker/Docker.app /Applications');
+                    await execSync('hdiutil detach /Volumes/Docker');
                     dialog.showMessageBox({
                         type: 'info',
                         title: 'Install Docker - NovAMPP',

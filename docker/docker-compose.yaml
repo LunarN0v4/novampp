@@ -1,16 +1,24 @@
 version: '3'
 services:
-    novampp:
-        container_name: novampp
+    novampp-httpd:
+        container_name: novampp-httpd
         image: novampp-httpd
         volumes:
-            - ./
-        working_dir: /app
-        command: sh -c "apachectl -D FOREGROUND"
+            - ./data/httpd:/var/www/html
         restart: always
         ports:
             - 80:80
             - 443:443
+        networks:
+            - novampp
+    novampp-mysql:
+        container_name: novampp-mysql
+        image: novampp-mysql
+        volumes:
+            - ./data/mysql:/var/lib/mysql
+        restart: always
+        ports:
+            - 3306:3306
         networks:
             - novampp
 networks:
