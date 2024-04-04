@@ -18,7 +18,6 @@ module.exports = {
         setupIcon: './src/favicon.ico',
         setupExe: 'NovAMPP-Installer.exe',
         noMsi: true,
-        remoteReleases: 'https://git.zeusteam.dev/nova/novampp/releases',
       },
     },
     {
