@@ -5,27 +5,28 @@ module.exports = {
   packagerConfig: {
     asar: true,
     executableName: 'NovAMPP',
+    icon: './src/favicon',
   },
   rebuildConfig: {},
   makers: [
+    {
+      name: '@electron-forge/maker-zip',
+      platforms: ['darwin', 'linux', 'win32'],
+      config: {
+        name: 'NovAMPP',
+        icon: './src/favicon',
+      },
+    },
     {
       name: '@electron-forge/maker-squirrel',
       config: {
         name: 'NovAMPP',
         authors: 'Nova Notepad',
         exe: 'NovAMPP.exe',
-        icon: './src/favicon.ico',
-        setupIcon: './src/favicon.ico',
+        icon: './src/favicon',
+        setupIcon: './src/favicon',
         setupExe: 'NovAMPP-Installer.exe',
         noMsi: true,
-      },
-    },
-    {
-      name: '@electron-forge/maker-zip',
-      platforms: ['darwin', 'linux', 'win32'],
-      config: {
-        name: 'NovAMPP',
-        icon: './src/favicon.ico',
       },
     },
     {
@@ -44,7 +45,7 @@ module.exports = {
           depends: ['docker'],
           maintainer: 'Nova Notepad',
           homepage: 'https://git.zeusteam.dev/nova/novampp',
-          icon: './src/favicon.ico',
+          icon: './src/favicon',
           categories: ['Development'],
           license: 'Apache-2.0',
           bin: 'NovAMPP',
@@ -67,7 +68,7 @@ module.exports = {
           depends: ['docker'],
           maintainer: 'Nova Notepad',
           homepage: 'https://git.zeusteam.dev/nova/novampp',
-          icon: './src/favicon.ico',
+          icon: './src/favicon',
           categories: ['Development'],
           license: 'Apache-2.0',
           bin: 'NovAMPP',
