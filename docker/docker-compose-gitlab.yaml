@@ -1,9 +1,8 @@
 version: '3'
 services:
     novampp-httpd:
-        build: ./builds/httpd/
         container_name: novampp-httpd
-        image: novampp-httpd
+        image: 
         volumes:
             - ./data/httpd:/var/www/html
         restart: always
@@ -13,12 +12,10 @@ services:
         networks:
             - novampp
     novampp-mysql:
-        build: ./builds/mysql/
         container_name: novampp-mysql
-        image: novampp-mysql
+        image: 
         volumes:
             - ./data/mysql:/var/lib/mysql
-            - ./logs:/var/log/mysql
         restart: always
         ports:
             - 3306:3306
