@@ -1,6 +1,6 @@
 # NovAMPP
 
-NovAMPP (Nova's Apache2, MySQL, PHP and Perl server) is a dockerised alternative to already existing web server managers on Windows, Linux and macOS.  
+NovAMPP (Nova's Apache2, MariaDB, PHP and Perl server) is a dockerised alternative to already existing web server managers on Windows, Linux and macOS.  
 This project is a direct response to issues that my high school has related to said alternative software by running in Docker, having a streamlined installer, and being easy for anyone who wants to start developing websites without being bombarded with unnecessarily complex GUIs.  
 
 ## Table of Contents

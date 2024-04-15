@@ -14,6 +14,9 @@ builder:
         # Windows installers will still be available in releases, just not in the CI/CD pipeline.
         # - npm run make-win
         - npm run make-darwin
+        - zip ./out/make/docker.zip ./docker/*
     artifacts:
         paths:
             - ./out/make/*
+    tags:
+        - docker

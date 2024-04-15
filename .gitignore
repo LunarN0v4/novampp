@@ -93,4 +93,4 @@ out/
 
 package-lock.json
 yarn.lock
-docker/data/*
+docker/data/mariadb/*

@@ -16,59 +16,53 @@ function startupchecks() {
     if (!fs.existsSync(literalpath + '/docker')) fs.mkdirSync(literalpath + '/docker');
     const dockerComposePath = path.join(literalpath, '/docker/docker-compose.yaml');
     if (!fs.existsSync(dockerComposePath)) {
-        const zipUrl = 'https://git.zeusteam.dev/nova/novampp/-/releases/latest/download/docker.zip';
-        const zipFilePath = path.join(literalpath, '/docker/docker.zip');
-        const extractPath = path.join(literalpath, '/docker');
-        axios({
-            method: 'get',
-            url: zipUrl,
-            responseType: 'stream'
-        }).then(response => {
-            const writer = fs.createWriteStream(zipFilePath);
-            response.data.pipe(writer);
-            writer.on('finish', () => {
-                fs.createReadStream(zipFilePath)
-                    .pipe(unzipper.Extract({ path: extractPath }))
-                    .on('close', () => {
-                        fs.unlinkSync(zipFilePath);
-                        console.log('Compose files extracted successfully');
-                        app.dialog.showMessageBox(null, {
-                            type: 'info',
-                            title: 'Compose - NovAMPP',
-                            message: 'Where would you like to get the Compose images from?',
-                            detail: 'GitLab - Recommended, faster (takes ~1-2 mins), may not have the latest packages.\nSelf-build - Not recommended, slower (takes ~10-30 mins), will have the latest packages.',
-                            buttons: ['GitLab', 'Self-build']
-                        }).then((response) => {
-                            if (response.response === 0) {
-                                fs.unlinkSync(literalpath + '/docker/docker-compose.yaml');
-                                fs.rmdirSync(literalpath + '/docker/builds/', { recursive: true });
-                                fs.renameSync(literalpath + '/docker/docker-compose-gitlab.yaml', literalpath + '/docker/docker-compose.yaml');
-                                exec('docker compose up -d', { cwd: literalpath + "/docker/" }, (error, stdout, stderr) => {
-                                    if (error) {
-                                        console.log('Failed to start Compose');
-                                    } else {
-                                        console.log('Compose started');
-                                    };
-                                });
-                            } else if (response.response === 1) {
-                                fs.unlinkSync(literalpath + '/docker/docker-compose-gitlab.yaml');
-                                exec('docker compose up -d', { cwd: literalpath + "/docker/" }, (error, stdout, stderr) => {
-                                    if (error) {
-                                        console.log('Failed to start Compose');
-                                    } else {
-                                        console.log('Compose started');
-                                    };
-                                });
-                            } else {
-                                console.log('User cancelled the dialog');
-                            };
-                        });
-                    });
-            });
-        }).catch(error => {
-            console.log('Failed to download the Compose files');
+        dialog.showMessageBox({
+            type: 'error',
+            title: 'Compose - NovAMPP',
+            message: 'Docker Compose files are missing',
+            detail: 'Please download them from GitLab and place them in the Docker folder, then restart NovAMPP.',
+            buttons: ['OK', 'Go to GitLab']
+        }).then((response) => {
+            if (response.response === 0) {
+                app.exit();
+                app.quit();
+            } else {
+                const command = process.platform === 'win32' ? 'start https://git.zeusteam.dev/nova/novampp/-/releases' : process.platform === 'darwin' ? 'open https://git.zeusteam.dev/nova/novampp/-/releases' : 'xdg-open https://git.zeusteam.dev/nova/novampp/-/releases';
+                exec(command, (error, stdout, stderr) => {
+                    if (error) {
+                        console.log('Failed to open GitLab page');
+                    } else {
+                        console.log('GitLab page opened');
+                        app.exit();
+                        app.quit();
+                    }
+                });
+            };
         });
     };
+    //if (!fs.existsSync(dockerComposePath)) {
+    //    const zipUrl = 'https://git.zeusteam.dev/nova/novampp/-/releases/latest/download/docker.zip';
+    //    const zipFilePath = path.join(literalpath, '/docker/docker.zip');
+    //    const extractPath = path.join(literalpath, '/docker');
+    //    axios({
+    //        method: 'get',
+    //        url: zipUrl,
+    //        responseType: 'stream'
+    //    }).then(response => {
+    //        const writer = fs.createWriteStream(zipFilePath);
+    //        response.data.pipe(writer);
+    //        writer.on('finish', () => {
+    //            fs.createReadStream(zipFilePath)
+    //                .pipe(unzipper.Extract({ path: extractPath }))
+    //                .on('close', () => {
+    //                    fs.unlinkSync(zipFilePath);
+    //                    console.log('Compose files extracted successfully');
+    //                });
+    //        });
+    //    }).catch(error => {
+    //        console.log('Failed to download the Compose files');
+    //    });
+    //};
     if (fs.existsSync(path.join(literalpath, '/docker/docker.zip'))) {
         fs.unlinkSync(path.join(literalpath, '/docker/docker.zip'));
         console.log('docker.zip deleted');
@@ -93,8 +87,14 @@ function startupchecks() {
         fs.mkdirSync(literalpath + '/docker/data');
     } else if (!fs.existsSync(literalpath + '/docker/data/httpd')) {
         fs.mkdirSync(literalpath + '/docker/data/httpd');
-    } else if (!fs.existsSync(literalpath + '/docker/data/mysql')) {
-        fs.mkdirSync(literalpath + '/docker/data/mysql');
+    } else if (!fs.existsSync(literalpath + '/docker/data/mariadb')) {
+        fs.mkdirSync(literalpath + '/docker/data/mariadb');
+    } else if (!fs.existsSync(literalpath + '/docker/builds/httpd/apache2/conf-available')) {
+        fs.mkdirSync(literalpath + '/docker/builds/httpd/apache2/conf-available');
+    } else if (!fs.existsSync(literalpath + '/docker/builds/httpd/apache2/mods-available')) {
+        fs.mkdirSync(literalpath + '/docker/builds/httpd/apache2/mods-available');
+    } else if (!fs.existsSync(literalpath + '/docker/builds/httpd/apache2/sites-available')) {
+        fs.mkdirSync(literalpath + '/docker/builds/httpd/apache2/sites-available');
     } else if (!fs.existsSync(literalpath + '/docker/builds/httpd/apache2/conf-enabled')) {
         fs.mkdirSync(literalpath + '/docker/builds/httpd/apache2/conf-enabled');
     } else if (!fs.existsSync(literalpath + '/docker/builds/httpd/apache2/mods-enabled')) {
@@ -102,36 +102,33 @@ function startupchecks() {
     } else if (!fs.existsSync(literalpath + '/docker/builds/httpd/apache2/sites-enabled')) {
         fs.mkdirSync(literalpath + '/docker/builds/httpd/apache2/sites-enabled');
     };
-    if (fs.existsSync(path.join(literalpath, '/docker/data/phpmyadmin.inc.php'))) {
-        fs.chmodSync(path.join(literalpath, '/docker/data/phpmyadmin.inc.php'), 0o600);
-    };
 };
 function checkargs() {
     if (process.argv.length === 2) {
         switch (process.argv[1]) {
             case '--squirrel-install':
                 if (process.platform === 'win32') {
-                    const shortcutPath = path.join(process.env.APPDATA, 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'NovAMPP.lnk');
+                    const shortcutPath = path.join('%appdata%', 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'NovAMPP.lnk');
                     const targetPath = process.execPath;
                     exec(`powershell "$shortcut = (New-Object -ComObject WScript.Shell).CreateShortcut('${shortcutPath}'); $shortcut.TargetPath = '${targetPath}'; $shortcut.Save()"`);
                 };
                 break;
             case '--squirrel-updated':
                 if (process.platform === 'win32') {
-                    const shortcutPath = path.join(process.env.APPDATA, 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'NovAMPP.lnk');
+                    const shortcutPath = path.join('%appdata%', 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'NovAMPP.lnk');
                     const targetPath = process.execPath;
                     exec(`powershell "$shortcut = (New-Object -ComObject WScript.Shell).CreateShortcut('${shortcutPath}'); $shortcut.TargetPath = '${targetPath}'; $shortcut.Save()"`);
                 };
                 break;
             case '--squirrel-uninstall':
                 if (process.platform === 'win32') {
-                    const shortcutPath = path.join(process.env.APPDATA, 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'NovAMPP.lnk');
+                    const shortcutPath = path.join('%appdata%', 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'NovAMPP.lnk');
                     exec(`powershell "Remove-Item -Path '${shortcutPath}'"`);
                 };
                 break;
             case '--squirrel-obsolete':
                 if (process.platform === 'win32') {
-                    const shortcutPath = path.join(process.env.APPDATA, 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'NovAMPP.lnk');
+                    const shortcutPath = path.join('%appdata%', 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'NovAMPP.lnk');
                     exec(`powershell "Remove-Item -Path '${shortcutPath}'"`);
                 };
                 break;
