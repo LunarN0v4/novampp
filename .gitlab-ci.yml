@@ -7,8 +7,9 @@ builder:
     script:
         - apt-get update
         - apt-get upgrade -y
-        - apt-get install -y --install-recommends --fix-missing nodejs npm curl wget dpkg rpm zip unzip
-        - apt-get install -y --install-recommends --fix-missing wine mono-complete
+        - apt-get install -y --install-recommends --fix-missing apt-utils curl wget git gpg
+        - apt-get install -y --install-recommends --fix-missing nodejs npm dpkg rpm zip unzip
+        - apt-get install -y --install-recommends --fix-missing wine wine64 mono-complete
         - npm install .
         - npm run make-linux
         - npm run make-darwin
