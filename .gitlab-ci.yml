@@ -8,15 +8,20 @@ builder:
         - apt-get update
         - apt-get upgrade -y
         - apt-get install -y --install-recommends --fix-missing nodejs npm curl wget dpkg rpm zip unzip
+        - apt-get install -y --install-recommends --fix-missing wine wine-mono
         - npm install .
         - npm run make-linux
-        # Windows will not be compiled here as installing Wine and Mono takes a lot of time, alongside unnecessary amounts of storage. You may compile a Windows installer and zip using "npm run make-win" on a Windows machine.
-        # Windows installers will still be available in releases, just not in the CI/CD pipeline.
-        # - npm run make-win
         - npm run make-darwin
-        - zip ./out/make/docker.zip ./docker/*
+        - npm run make-win
+        - cd ./docker && zip -r ./../out/make/docker.zip ./* && cd ..
     artifacts:
         paths:
-            - ./out/make/*
+            - ./out/make/deb/x64/*.deb
+            - ./out/make/rpm/x64/*.rpm
+            - ./out/make/squirrel.windows/x64/*.exe
+            - ./out/make/zip/darwin/x64/*.zip
+            - ./out/make/zip/linux/x64/*.zip
+            - ./out/make/zip/win32/x64/*.zip
+            - ./out/make/docker.zip
     tags:
         - docker
