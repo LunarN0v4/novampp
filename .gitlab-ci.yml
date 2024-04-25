@@ -9,12 +9,20 @@ builder:
         - apt-get upgrade -y
         - apt-get install -y --install-recommends --fix-missing apt-utils curl wget git gpg
         - apt-get install -y --install-recommends --fix-missing nodejs npm dpkg rpm zip unzip
-        - apt-get install -y --install-recommends --fix-missing wine wine64 mono-complete
+        - dpkg --add-architecture i386
+        - mkdir -pm755 /etc/apt/keyrings
+        - wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
+        - wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/bookworm/winehq-bookworm.sources
+        - apt-get update
+        - apt-get install -y --install-recommends --fix-missing winehq-stable wine-stable wine-stable-amd64 wine-stable-i386
+        - mkdir -p /usr/share/wine/mono && mkdir -p /usr/share/wine/gecko
+        - curl -o /tmp/wine-mono.tar.xz https://dl.winehq.org/wine/wine-mono/9.1.0/wine-mono-9.1.0-x86.tar.xz && curl -o /tmp/wine-gecko.tar.xz https://dl.winehq.org/wine/wine-gecko/2.47.4/wine-gecko-2.47.4-x86.tar.xz
+        - tar -C /usr/share/wine/mono -xf /tmp/wine-mono.tar.xz && tar -C /usr/share/wine/gecko -xf /tmp/wine-gecko.tar.xz
+        - rm -rf /tmp/wine-mono.tar.xz && rm -rf /tmp/wine-gecko.tar.xz
         - npm install .
         - npm run make-linux
         - npm run make-darwin
         - npm run make-win
-        - cd ./docker && zip -r ./../out/make/docker.zip ./* && cd ..
     artifacts:
         paths:
             - ./out/make/deb/x64/*.deb
@@ -23,6 +31,5 @@ builder:
             - ./out/make/zip/darwin/x64/*.zip
             - ./out/make/zip/linux/x64/*.zip
             - ./out/make/zip/win32/x64/*.zip
-            - ./out/make/docker.zip
     tags:
         - docker
