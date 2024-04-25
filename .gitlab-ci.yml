@@ -19,9 +19,10 @@ builder:
         - curl -o /tmp/wine-mono.tar.xz https://dl.winehq.org/wine/wine-mono/9.1.0/wine-mono-9.1.0-x86.tar.xz && curl -o /tmp/wine-gecko.tar.xz https://dl.winehq.org/wine/wine-gecko/2.47.4/wine-gecko-2.47.4-x86.tar.xz
         - tar -C /usr/share/wine/mono -xf /tmp/wine-mono.tar.xz && tar -C /usr/share/wine/gecko -xf /tmp/wine-gecko.tar.xz
         - rm -rf /tmp/wine-mono.tar.xz && rm -rf /tmp/wine-gecko.tar.xz
-        - Xvfb :0 &
-        - DISPLAY=:0.0 wineboot --init
-        - DISPLAY=:0.0 wineboot -u
+        - Xvfb :0 -screen 0 1024x768x16 &
+        - export DISPLAY=:0
+        - xvfb-run wineboot --init
+        - xvfb-run wineboot -u
         - npm install .
         - npm run make-linux
         - npm run make-darwin
