@@ -20,7 +20,7 @@ builder:
         - tar -C /usr/share/wine/mono -xf /tmp/wine-mono.tar.xz && tar -C /usr/share/wine/gecko -xf /tmp/wine-gecko.tar.xz
         - rm -rf /tmp/wine-mono.tar.xz && rm -rf /tmp/wine-gecko.tar.xz
         - Xvfb :0 &
-        - DISPLAY=:0.0 wine init
+        - DISPLAY=:0.0 wineboot --init
         - DISPLAY=:0.0 wineboot -u
         - npm install .
         - npm run make-linux
