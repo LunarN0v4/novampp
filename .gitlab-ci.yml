@@ -5,6 +5,7 @@ builder:
     stage: build
     image: debian:12
     script:
+        - export DEBIAN_FRONTEND=noninteractive
         - apt-get update
         - apt-get upgrade -y
         - apt-get install -y --install-recommends --fix-missing apt-utils curl wget git gpg xvfb
@@ -21,6 +22,7 @@ builder:
         - rm -rf /tmp/wine-mono.tar.xz && rm -rf /tmp/wine-gecko.tar.xz
         - Xvfb :0 -screen 0 1024x768x16 &
         - export DISPLAY=:0
+        - WINEDLLOVERRIDES="mscoree,mshtml=" wineboot -u
         - npm install .
         - npm run make-linux
         - npm run make-darwin
