@@ -1,7 +1,7 @@
 {
   "name": "dev.nova.novampp",
   "productName": "NovAMPP",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "NovAMPP, a simple dockerised web server.",
   "main": "index.js",
   "scripts": {
@@ -43,6 +43,7 @@
     "fs": "^0.0.1-security",
     "path": "^0.12.7",
     "sudo-prompt": "^9.2.1",
-    "unzipper": "^0.11.4"
+    "unzipper": "^0.11.4",
+    "util": "^0.12.5"
   }
 }

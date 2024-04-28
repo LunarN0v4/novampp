@@ -37,17 +37,27 @@
                 border-radius: 5px;
                 cursor: pointer;
             }
+            a {
+                color: #00a1ff;
+                text-decoration: none;
+                font-family: 'JetBrains Mono', monospace;
+            }
             br {
                 margin-bottom: 20.8px;
             }
         </style>
         <meta charset="UTF-8" />
-        <title>NovAMPP</title>
+        <title>Install Docker - NovAMPP</title>
     </head>
     <body>
-        <h1>NovAMPP</h1>
+        <h1>Install Docker</h1>
+        <div id="subtext">NovAMPP requires Docker Desktop and WSL2 to be installed</div>
         <p id="errormessage"></p>
         <button style="display: inline;" id="installdocker">Install Docker</button>
+        <br>
+        <div>By installing Docker Desktop:</div>
+        <div>You agree to the Docker Desktop Subscription Service Agreement.</div>
+        <a href="https://www.docker.com/legal/docker-subscription-service-agreement" target="_blank">View Agreement</a>
         <script src="./scripts/installdocker.js"></script>
     </body>
 </html>

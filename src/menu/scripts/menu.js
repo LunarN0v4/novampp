@@ -5,8 +5,11 @@ const stopcompose = document.getElementById('stopcompose');
 const startcompose = document.getElementById('startcompose');
 const whatdoesthisdo = document.getElementById('whatdoesthisdo');
 const opendata = document.getElementById('opendata');
+const advanced = document.getElementById('advanced');
 
 window.onload = async function() {
+    errormessage.style.color = 'white';
+    errormessage.innerText = 'Checking if NovAMPP Compose is running, please wait...';
     const composeresponse = await window.electronAPI.iscomposerunning();
     if (composeresponse === 'running') {
         errormessage.style.color = 'green';
@@ -26,6 +29,8 @@ window.onload = async function() {
 };
 
 restartcompose.addEventListener('click', async () => {
+    errormessage.style.color = 'white';
+    errormessage.innerText = 'Restarting NovAMPP Compose, please wait...';
     const response = await window.electronAPI.restartcompose();
     if (response === 'success') {
         errormessage.style.color = 'green';
@@ -37,6 +42,8 @@ restartcompose.addEventListener('click', async () => {
 });
 
 resetcompose.addEventListener('click', async () => {
+    errormessage.style.color = 'white';
+    errormessage.innerText = 'Resetting NovAMPP Compose, please wait...';
     const response = await window.electronAPI.resetcompose();
     if (response === 'success') {
         errormessage.style.color = 'green';
@@ -48,6 +55,8 @@ resetcompose.addEventListener('click', async () => {
 });
 
 stopcompose.addEventListener('click', async () => {
+    errormessage.style.color = 'white';
+    errormessage.innerText = 'Stopping NovAMPP Compose, please wait...';
     const response = await window.electronAPI.stopcompose();
     if (response === 'success') {
         errormessage.style.color = 'green';
@@ -59,6 +68,8 @@ stopcompose.addEventListener('click', async () => {
 });
 
 startcompose.addEventListener('click', async () => {
+    errormessage.style.color = 'white';
+    errormessage.innerText = 'Starting NovAMPP Compose, please wait...';
     const response = await window.electronAPI.startcompose();
     if (response === 'success') {
         errormessage.style.color = 'green';
@@ -75,4 +86,8 @@ whatdoesthisdo.addEventListener('click', async () => {
 
 opendata.addEventListener('click', async () => {
     await window.electronAPI.opendata();
+});
+
+advanced.addEventListener('click', async () => {
+    await window.electronAPI.advanced();
 });

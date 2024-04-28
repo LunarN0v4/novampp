@@ -40,19 +40,72 @@
             br {
                 margin-bottom: 20.8px;
             }
+            select {
+                background-color: #333333;
+                color: #a5a5a5;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 100%;
+                display: block;
+                border: none;
+                border-radius: 5px;
+                padding: 10px;
+            }
+            optgroup {
+                font-weight: bold;
+                font-style: italic;
+                padding-left: 20px;
+            }
         </style>
         <meta charset="UTF-8" />
         <title>What does this do? - NovAMPP</title>
+        <script>
+            function changetext() {
+                const select = document.getElementById('select');
+                const description = document.getElementById('description');
+                if (select.value === 'default') {
+                    description.innerHTML = '';
+                } else if (select.value === 'restartcompose') {
+                    description.innerHTML = 'Restarts the Compose server';
+                } else if (select.value === 'resetcompose') {
+                    description.innerHTML = 'Recreates the Compose images and containers - Does not delete user data';
+                } else if (select.value === 'stopcompose') {
+                    description.innerHTML = 'Stops the Compose server';
+                } else if (select.value === 'startcompose') {
+                    description.innerHTML = 'Starts the Compose server';
+                } else if (select.value === 'whatdoesthisdo') {
+                    description.innerHTML = 'Opens this page of course!';
+                } else if (select.value === 'opendata') {
+                    description.innerHTML = 'Opens the data folder - Where all your user data is stored';
+                } else if (select.value === 'advanced') {
+                    description.innerHTML = 'Opens the advanced settings - Here be dragons!';
+                } else {
+                    description.innerHTML = '';
+                }
+            }
+            onload = function () {
+                changetext();
+            };
+        </script>
     </head>
     <body>
         <h1>What does this do?</h1>
         <div>A guide to every button in NovAMPP</div>
         <br>
-        <div>Restart Compose - Recreates Docker Compose containers</div>
-        <div>Reset Compose - Removes all Compose images and recreates them from scratch</div>
-        <div>Stop Compose - Stops all Compose containers</div>
-        <div>Start Compose - Starts Compose (automatically done on startup of NovAMPP)</div>
-        <div>What does this do? - Opens this page</div>
-        <div>Open Data Folder - Opens your Docker data folder</div>
+        <select id="select" onchange="changetext()">
+            <option value="default">Select an option</option>
+            <separator></separator>
+            <optgroup label="Actions"></optgroup>
+            <option value="restartcompose">Restart Compose</option>
+            <option value="resetcompose">Reset Compose</option>
+            <option value="stopcompose">Stop Compose</option>
+            <option value="startcompose">Start Compose</option>
+            <option value="whatdoesthisdo">What does this do?</option>
+            <option value="opendata">Open Data Folder</option>
+            <option value="advanced">Advanced Settings</option>
+            <separator></separator>
+            <optgroup label="Advanced Settings"></optgroup>
+        </select>
+        <br>
+        <div id="description"></div>
     </body>
 </html>

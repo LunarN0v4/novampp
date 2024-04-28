@@ -13,5 +13,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
     opendata: async () => await ipcRenderer.invoke('opendata'),
     isdockerinstalled: async () => await ipcRenderer.invoke('isdockerinstalled'),
     installdocker: async () => await ipcRenderer.invoke('install-docker'),
+    installwsl: async () => await ipcRenderer.invoke('installwsl'),
+    opendockerinspage: async () => await ipcRenderer.invoke('opendockerinspage'),
     whatdoesthisdo: async () => await ipcRenderer.invoke('whatdoesthisdo'),
+    platform: async () => await ipcRenderer.invoke('platform'),
+    advanced: async () => await ipcRenderer.invoke('advanced'),
 });
