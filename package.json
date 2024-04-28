@@ -1,7 +1,7 @@
 {
   "name": "dev.nova.novampp",
   "productName": "NovAMPP",
-  "version": "1.1.0",
+  "version": "1.0.0",
   "description": "NovAMPP, a simple dockerised web server.",
   "main": "index.js",
   "scripts": {
